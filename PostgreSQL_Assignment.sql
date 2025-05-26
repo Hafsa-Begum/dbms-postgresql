@@ -1,8 +1,10 @@
+--create rangers table
 CREATE TABLE rangers(
     ranger_id SERIAL PRIMARY KEY,
     name VARCHAR(25) NOT NULL,
     region VARCHAR(50) NOT NULL DEFAULT 'Mid point of region'
 );
+--create species table
 CREATE TABLE species(
     species_id SERIAL PRIMARY KEY,
     common_name VARCHAR(50) NOT NULL,
@@ -10,6 +12,7 @@ CREATE TABLE species(
     discovery_date DATE,
     conservation_status VARCHAR(25)
 );
+--create sightings table
 CREATE TABLE sightings(
     sighting_id SERIAL PRIMARY KEY,
     ranger_id INTEGER REFERENCES rangers(ranger_id),
@@ -19,6 +22,7 @@ CREATE TABLE sightings(
     notes VARCHAR(250)
 );
 
+-- drop table and see table data
 DROP TABLE rangers;
 SELECT * FROM rangers;
 DROP TABLE species;
@@ -45,33 +49,40 @@ INSERT INTO sightings (species_id, ranger_id, location, sighting_time, notes) VA
 (2, 2, 'Bankwood Area', '2024-05-12 16:20:00', 'Juvenile seen'),
 (3, 3, 'Bamboo Grove East', '2024-05-15 09:10:00', 'Feeding observed'),
 (1, 2, 'Snowfall Pass', '2024-05-18 18:30:00', NULL)
+
 -- Problem - 1
 INSERT INTO rangers (name, region ) VALUES
 ('Derek Fox','Coastal Plains')
 
 -- Problem - 2
 SELECT count(DISTINCT discovery_date) as unique_species_count FROM species;
+
 -- Problem - 3
 SELECT * FROM sightings
     WHERE location LIKE('%Pass');
+
 -- Problem - 4
 SELECT name, count(*) FROM rangers as r
 JOIN sightings s on r.ranger_id = s.ranger_id
 GROUP BY r.name;
+
 -- Problem - 5
 SELECT common_name FROM species as sp
 LEFT JOIN sightings s on sp.species_id = s.species_id
-WHERE s.species_id IS NULL;;
+WHERE s.species_id IS NULL;
+
 -- Problem - 6
 SELECT common_name, sighting_time, name  FROM 
 rangers as r
 JOIN sightings s on r.ranger_id = s.ranger_id
 JOIN species sp on sp.species_id = s.species_id 
 ORDER BY sighting_time DESC LIMIT(2);
+
 -- Problem - 7
 UPDATE species
     set conservation_status = 'Historic'
     WHERE discovery_date < '1800-01-01';
+
 -- Problem - 8
 SELECT sighting_id,
     CASE 
@@ -80,6 +91,7 @@ SELECT sighting_id,
     ELSE 'Evening'
     END as time_of_day
     FROM sightings;
+    
 -- Problem - 9
 DELETE FROM rangers
 USING rangers AS r
